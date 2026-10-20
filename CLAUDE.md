@@ -58,6 +58,7 @@ realestate-app/
 ├── index.html                  # エントリーポイントの HTML
 ├── package.json                # 依存パッケージとスクリプト
 ├── vite.config.js              # Vite の設定
+├── vercel.json                 # Vercel の設定（どの URL でも index.html を返す）
 ├── supabase/
 │   └── migrations/
 │       └── 20261021000000_create_properties.sql # properties テーブル・RLS ポリシーの作成
@@ -89,6 +90,15 @@ realestate-app/
 - `npm run dev` で開発サーバーを起動し、表示された URL（通常 http://localhost:5173）をブラウザで開く。
 - `npm run build` で本番用ファイルを `dist/` に出力する。`npm run preview` で確認できる。
 - コードを変更したら、プッシュ前に `npm run build` が通ることを確認する。
+
+## 公開（Vercel）
+
+- Vercel で公開する。ビルドコマンドは `npm run build`、出力先は `dist`（Vite の初期設定のまま）。
+- `vercel.json` の `rewrites` で、どの URL にアクセスされても `index.html` を返す（`/properties` などを直接開いたり再読み込みしたりしても 404 にしないため）。
+  - `dist/assets/` などの実在するファイルは rewrite より先に返されるので、そのまま配信される。
+- 環境変数（`VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`）は Vercel ダッシュボードの Settings > Environment Variables で設定する。**`vercel.json` には書かない。**
+  - `VITE_` の変数はビルド時に埋め込まれるため、変更したら再デプロイする。
+- 公開 URL が決まったら、Supabase の Authentication > URL Configuration の Site URL / Redirect URLs に登録する。
 
 ## 認証（Supabase）
 
