@@ -28,6 +28,38 @@ button:disabled {
   cursor: default;
 }
 
+/* 白地の控えめなボタン（キャンセル・編集・ログアウト） */
+.secondary-button {
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1d5db;
+}
+
+.secondary-button:hover {
+  background: #f9fafb;
+}
+
+.secondary-button:disabled {
+  color: #9ca3af;
+  background: #fff;
+}
+
+/* 削除ボタン */
+.danger-button {
+  color: #b91c1c;
+  background: #fff;
+  border: 1px solid #fecaca;
+}
+
+.danger-button:hover {
+  background: #fef2f2;
+}
+
+.danger-button:disabled {
+  color: #fca5a5;
+  background: #fff;
+}
+
 .loading {
   margin: 80px 16px;
   text-align: center;
@@ -144,26 +176,40 @@ button:disabled {
   white-space: nowrap;
 }
 
-.logout-button {
+.app-header-user button {
   flex-shrink: 0;
-  color: #374151;
-  background: #fff;
-  border: 1px solid #d1d5db;
 }
 
-.logout-button:hover {
-  background: #f9fafb;
-}
-
-.logout-button:disabled {
-  color: #9ca3af;
-  background: #fff;
+.property-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .property-count {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 0.9rem;
   color: #6b7280;
+}
+
+.empty-message {
+  padding: 32px 16px;
+  text-align: center;
+  color: #6b7280;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.property-page .form-error {
+  margin-bottom: 16px;
+}
+
+/* 物件の新規登録フォームは一覧の上に置く */
+.property-page > main > .property-card {
+  max-width: 480px;
+  margin-bottom: 16px;
 }
 
 .property-grid {
@@ -179,9 +225,33 @@ button:disabled {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.property-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .property-name {
   margin: 0 0 12px;
   font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.property-card-header .property-name {
+  margin: 0;
+}
+
+/* 間取りのバッジ */
+.property-layout {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 999px;
 }
 
 .property-rent {
@@ -202,6 +272,58 @@ button:disabled {
   margin: 0;
   font-size: 0.9rem;
   color: #4b5563;
+  overflow-wrap: anywhere;
+}
+
+.property-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.property-actions button {
+  padding: 6px 14px;
+  font-size: 0.9rem;
+}
+
+/* 物件の登録・編集フォーム */
+.property-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.property-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.property-form input {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.property-form input:focus {
+  outline: 2px solid #93c5fd;
+  border-color: #2563eb;
+}
+
+.property-form .form-error {
+  margin: 0;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 /* スマートフォン向け */
