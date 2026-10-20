@@ -10,7 +10,7 @@
 
 ## GitHubリポジトリ
 
-https://github.com/mizuho093067/realestate-app （未作成。作成したらこの行の注記を消す）
+https://github.com/mizuho093067/realestate-app
 
 ## 技術スタック
 
@@ -49,6 +49,7 @@ https://github.com/mizuho093067/realestate-app （未作成。作成したらこ
 
 ```
 realestate-app/
+├── .gitignore              # コミットしないファイル（node_modules/ dist/ .env）
 └── CLAUDE.md               # このファイル
 ```
 
