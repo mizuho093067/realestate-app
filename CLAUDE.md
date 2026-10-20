@@ -5,8 +5,8 @@
 ## プロジェクト概要
 
 - **プロジェクト名**: realestate-app
-- **内容**: 不動産関連アプリ（詳細は未定。決まったらここに追記する）
-- **技術スタック**: 未定（決まったら「技術スタック」の項に記入する）
+- **内容**: Supabase 認証付きの不動産管理 Web アプリ（会員登録・ログイン後に物件一覧を表示する）
+- **技術スタック**: React 19 / Vite 8 / React Router 7 / Supabase（`@supabase/supabase-js`）
 
 ## GitHubリポジトリ
 
@@ -16,10 +16,13 @@ https://github.com/mizuho093067/realestate-app
 
 | 分類 | 使用技術 | 補足 |
 | --- | --- | --- |
-| フロントエンド | 未定 | |
-| バックエンド | 未定 | 必要な場合のみ |
-| データ保存 | 未定 | |
-| ホスティング | 未定 | |
+| UI ライブラリ | React 19（`react` / `react-dom`） | 関数コンポーネント + Hooks、JavaScript（JSX） |
+| ビルドツール | Vite 8 + `@vitejs/plugin-react` | 開発サーバーと本番ビルド |
+| 画面遷移 | React Router 7（`react-router-dom`） | `BrowserRouter` を使用 |
+| 認証 | Supabase Auth（`@supabase/supabase-js`） | メールアドレス + パスワード |
+| スタイル | 素の CSS（`src/App.css`） | CSS フレームワークは使っていない |
+| 物件データ | ダミーデータ（`src/data/properties.js`） | まだデータベースには保存していない |
+| 実行環境 | Node.js 24 | |
 
 - 外部ライブラリは必要になるまで追加しない。追加する場合は理由をユーザーに説明してから入れる。
 
@@ -43,30 +46,86 @@ https://github.com/mizuho093067/realestate-app
   - 例: `物件一覧の表示を追加`、`家賃の並び替えの不具合を修正`
 - プッシュに失敗した場合は、エラー内容を報告し、強制プッシュ（`--force`）は行わないこと。
 - 不要なファイル（テスト用の一時ファイルなど）はコミットしない。
-- APIキーやパスワードなどの秘密情報は `.env` に書き、絶対にコミットしない（`.gitignore` で除外する）。
+- `.env` は**絶対にコミットしない**（`.gitignore` で除外済み）。
 
 ## ファイル構成
 
 ```
 realestate-app/
-├── .gitignore              # コミットしないファイル（node_modules/ dist/ .env）
-└── CLAUDE.md               # このファイル
+├── CLAUDE.md                   # このファイル
+├── .env.example                # 環境変数のひな形（.env にコピーして使う）
+├── .gitignore                  # コミットしないファイル（node_modules/ dist/ .env など）
+├── index.html                  # エントリーポイントの HTML
+├── package.json                # 依存パッケージとスクリプト
+├── vite.config.js              # Vite の設定
+└── src/
+    ├── main.jsx                # React の起動処理
+    ├── App.jsx                 # ルーティング（どの URL でどの画面を出すか）
+    ├── App.css                 # スタイル
+    ├── supabaseClient.js       # Supabase クライアント（.env の接続情報を読む）
+    ├── AuthProvider.jsx        # ログイン状態をアプリ全体に配る + useAuth フック
+    ├── authErrors.js           # Supabase のエラーを日本語メッセージに変換
+    ├── data/
+    │   └── properties.js       # 物件のダミーデータ
+    ├── components/
+    │   ├── ProtectedRoute.jsx  # ログイン必須ページのガード（未ログインなら /login へ）
+    │   ├── GuestRoute.jsx      # ログイン済みならログイン・登録画面から /properties へ
+    │   └── PropertyCard.jsx    # 物件1件分のカード
+    └── pages/
+        ├── LoginPage.jsx       # ログイン画面（/login）
+        ├── SignupPage.jsx      # 会員登録画面（/signup）
+        └── PropertyListPage.jsx # 物件一覧画面（/properties、ログアウトボタン付き）
 ```
 
 - ファイルを追加・削除したら、この構成図も更新する。
 
 ## 開発・実行方法
 
-- 未定（技術スタックが決まったら、インストール・起動・ビルドの手順をここに書く）。
-- ビルド手順がある場合は、プッシュ前にビルドが通ることを確認する。
+- 初回のみ `npm install` で依存パッケージをインストールする。
+- `.env.example` を `.env` にコピーし、Supabase の Project URL と Publishable key を設定する。
+- `npm run dev` で開発サーバーを起動し、表示された URL（通常 http://localhost:5173）をブラウザで開く。
+- `npm run build` で本番用ファイルを `dist/` に出力する。`npm run preview` で確認できる。
+- コードを変更したら、プッシュ前に `npm run build` が通ることを確認する。
+
+## 認証（Supabase）
+
+- 環境変数は `VITE_SUPABASE_URL` と `VITE_SUPABASE_PUBLISHABLE_KEY`。ブラウザで使うため `VITE_` で始める。
+- ブラウザに置いてよいのは **Publishable key だけ**。Secret key（`sb_secret_...`）や service_role キーはフロントエンドに絶対に入れない。
+- Supabase の呼び出しは `src/supabaseClient.js` の `supabase` を使い、`createClient` を他の場所で呼ばない。
+- ログイン状態は `useAuth()`（`session` / `user` / `loading`）で取得する。
+- ログインが必要な画面は `ProtectedRoute` で囲む。
+- 現在の Supabase 設定はメール確認なし（登録するとすぐログイン状態になる）。メール確認を有効にした場合は、`SignupPage.jsx` が「確認メールを送信しました」と表示する。その場合、Supabase の Authentication > URL Configuration にアプリの URL を登録する。
+- 動作確認で Supabase に実際のユーザーを作る場合は、事前にユーザーに確認する。
+
+## 画面とルーティング
+
+| パス | 画面 | 未ログイン時 | ログイン済み時 |
+| --- | --- | --- | --- |
+| `/login` | ログイン | 表示 | `/properties` へ移動 |
+| `/signup` | 会員登録 | 表示 | `/properties` へ移動 |
+| `/properties` | 物件一覧 | `/login` へ移動 | 表示 |
+| それ以外 | — | `/properties` へ移動（→ `/login`） | `/properties` へ移動 |
 
 ## コーディング規約
 
-- JavaScript を使う場合は `const` / `let` を使用し、`var` は使わない。
-- 変数名・関数名はキャメルケース（例: `addProperty`, `monthlyRent`）。
-- 金額は整数（円単位）で扱い、小数による計算誤差を避ける。
+- コンポーネントは関数コンポーネントと Hooks で書く。1ファイル1コンポーネント。
+  - 画面全体は `src/pages/`（名前は `〇〇Page`）、部品は `src/components/` に置く。
+- イベント用 props は `on` + 動詞、コンポーネント内のイベント処理は `handle` + イベント名（例: `handleSubmit`, `handleLogout`）。
+- JavaScript は `const` / `let` を使用し、`var` は使わない。
+- 変数名・関数名はキャメルケース。CSS クラス名はケバブケース（例: `property-card`）。
+- 金額（家賃）は整数（円単位）で扱い、表示時に `toLocaleString("ja-JP")` で桁区切りにする。
+
+```js
+// 物件データの例
+const property = {
+  id: 1,
+  name: "サンライズ渋谷 301号室",
+  rent: 128000,          // 家賃（円 / 月、整数）
+  area: "東京都渋谷区"
+};
+```
 
 ## 注意事項
 
 - スマートフォンでも見やすいレスポンシブデザインにする。
-- 保存データの形式を変える場合は、保存済みの古いデータも読めるように配慮する。
+- 画面に出すエラーメッセージは日本語にする（Supabase のエラーは `authErrors.js` で変換する）。
