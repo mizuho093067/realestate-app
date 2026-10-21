@@ -91,6 +91,13 @@ realestate-app/
 - `npm run build` で本番用ファイルを `dist/` に出力する。`npm run preview` で確認できる。
 - コードを変更したら、プッシュ前に `npm run build` が通ることを確認する。
 
+## デプロイ情報
+
+- 本番URL：https://realestate-app-iota-three.vercel.app
+- Supabaseプロジェクト名：realestate-app
+- Supabase Project URL：https://fudzoyjarlumnwiuhidt.supabase.co（プロジェクトID: `fudzoyjarlumnwiuhidt`）
+- 動作確認は本番URLで行う。`realestate-〇〇〇-mizuho093067.vercel.app` のようなランダムな文字列入りの URL はデプロイごとに固定された版で、再デプロイ後も古いままになる。
+
 ## 公開（Vercel）
 
 - Vercel で公開する。ビルドコマンドは `npm run build`、出力先は `dist`（Vite の初期設定のまま）。
@@ -98,6 +105,8 @@ realestate-app/
   - `dist/assets/` などの実在するファイルは rewrite より先に返されるので、そのまま配信される。
 - 環境変数（`VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`）は Vercel ダッシュボードの Settings > Environment Variables で設定する。**`vercel.json` には書かない。**
   - `VITE_` の変数はビルド時に埋め込まれるため、変更したら再デプロイする。
+  - Type は「Config」にする（値をあとから確認できるようにするため。どちらの値も公開ファイルに埋め込まれるので秘密ではない）。
+  - `VITE_SUPABASE_URL` は `https://〇〇〇.supabase.co` の形。Supabase 管理画面の URL（`supabase.com/dashboard/...`）を入れると「Failed to fetch」になる。
 - 公開 URL が決まったら、Supabase の Authentication > URL Configuration の Site URL / Redirect URLs に登録する。
 
 ## 認証（Supabase）
